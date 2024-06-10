@@ -1,0 +1,145 @@
+import example.*
+
+describe "tests parte uno" {
+	test "roberto lleva un camión con acoplado a través del puente de Brooklyn" {
+		camion.nroAcoplados(1)
+		roberto.vehiculo(camion)
+		paquete.destino(puente)
+		paquete.pagar()
+	
+		assert.that(paquete.puedeSerEntregado(roberto))
+
+	}
+
+	test "neo no tiene crédito por lo tanto no puede entregar un paquete en la matrix" {
+		neo.tieneCredito(false)
+		paquete.destino(matrix)
+	
+		assert.that(not paquete.puedeSerEntregado(neo))
+	}
+}
+
+
+
+
+describe "Tests de la parte dos" {
+
+	method initialize() {
+		mensajeria.contratar(roberto)
+		mensajeria.contratar(chuckNorris)
+		mensajeria.contratar(neo)
+		}	
+
+	test "se contrata a roberto, chuck norris y neo" {
+	
+		assert.that(mensajeria.mensajeros() == [roberto, chuckNorris, neo])
+	
+	}
+
+	test "se contrata a roberto, chuck norris y neo, pero neo queda atrapado en 
+		la matrix y se ausenta una semana, por lo tanto es despedido"{
+		
+		mensajeria.despedir(neo)	
+		
+		assert.that(mensajeria.mensajeros() == [roberto, chuckNorris])
+		}
+		
+	test "se despide a todos los mensajeros" {
+		mensajeria.despedirATodos()
+	
+		assert.that(mensajeria.mensajeros().isEmpty())
+		}
+		
+	test "la mensajeria es grande" {
+		assert.that(mensajeria.esMensajeriaGrande())
+	}
+	
+	test "el paquete puede ser entregado por el primer mensajero"{
+		paquete.destino(puente)
+		paquete.pagar()
+		assert.that(mensajeria.puedeEntregarElPrimero())
+	}
+	
+	test "el peso del último mensajero, neo, 
+			es igual a cero debido a que él vuela"{
+		assert.that(mensajeria.pesoUltimoMensajero() == 0)
+			}
+	
+		
+}
+
+describe "tests parte 3" {
+	
+		method initialize() {
+		mensajeria.contratar(roberto)
+		mensajeria.contratar(chuckNorris)
+		mensajeria.contratar(neo)
+		mensajeria.contratar(cazador)
+		}	
+	
+	test "chuck norris entrega un paquetito" {
+		assert.that(paquetito.puedeSerEntregado(chuckNorris))
+	}
+	
+	test "neo entrega un paqueton viajero" {
+		neo.tieneCredito(true)
+		paquetonViajero.sumarDestino(matrix)
+		paquetonViajero.sumarDestino(puente)
+		paquetonViajero.pagar()
+		assert.that(paquetonViajero.puedeSerEntregado(neo))
+	}
+	
+	test "solo neo puede entregar el paqueton viajero" {
+		neo.tieneCredito(true)
+		paquetonViajero.sumarDestino(matrix)
+		paquetonViajero.sumarDestino(puente)
+		paquetonViajero.pagar()
+
+		assert.equals([chuckNorris, neo], mensajeria.puedenEntregar(paquetonViajero))
+	}
+	
+	test "la mensajeria tiene sobrepeso" {
+		camion.nroAcoplados(2)
+		
+		assert.that(mensajeria.tieneSobrepeso())
+	}
+	
+	test "enviar un paquetito y paquete" {
+		paquetito.destino(puente)
+		paquete.destino(puente)
+		mensajeria.enviarPaquete(paquetito)
+		mensajeria.enviarPaquete(paquete)
+		assert.equals(50, mensajeria.facturacion())
+	}
+	
+	test "enviar un conjunto de paquetes" {
+		paquete.destino(puente)
+		paquetito.destino(matrix)
+		paquetonViajero.sumarDestino(matrix)
+		paquetonViajero.sumarDestino(puente)
+		neo.tieneCredito(true)
+		mensajeria.enviarPaquetes([paquete, paquetito, paquetonViajero])
+		
+		assert.that(mensajeria.facturacion() == 250)
+	}
+	
+	test "enviar pendiente más caro" {
+		paquete.destino(matrix)
+		paquetito.destino(matrix)
+		paquetonViajero.sumarDestino(matrix)
+		paquetonViajero.sumarDestino(puente)
+		mensajeria.sumarPendiente(paquete)
+		mensajeria.sumarPendiente(paquetito)
+		mensajeria.sumarPendiente(paquetonViajero)
+		mensajeria.enviarPendienteMasCaro()
+		
+		assert.that(mensajeria.enviosPendientes() == [paquete, paquetito])
+	}
+	
+	test "se entrega un paquete de los mensajeros en la frontera de la pesadilla" {
+		mensajeria.enviarPaquete(paqueteDeLosMensajeros)
+		
+		assert.that(mensajeria.facturacion() == 400)
+		
+	}
+}
